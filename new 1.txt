@@ -1,0 +1,31 @@
+from __future__ import print_function
+import cv2
+from Classes import RTRecongtion, VideoCapture, person
+import tensorflow as tf
+from tkinter import *
+from PIL import Image
+from PIL import ImageTk
+import threading
+import os
+import datetime
+import imutils
+import pdb
+import numpy as np
+import dlib
+
+
+loginValue=[("dilip","python")]
+bgclr="#282828"
+fgclr="#cecece"
+clr='#004a95'
+
+root=Tk()
+login=Toplevel()
+
+#login.geometry("400x400")
+root.geometry("1280x720")
+login.title("login page")
+root.title("Main Page")
+
+Frame_log=Frame(root)
+Frame1.grid(row=0

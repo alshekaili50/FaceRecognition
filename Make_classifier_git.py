@@ -32,7 +32,7 @@ with tf.Graph().as_default():
         embeddings = tf.get_default_graph().get_tensor_by_name("embeddings:0")
         phase_train_placeholder = tf.get_default_graph().get_tensor_by_name("phase_train:0")
         embedding_size = embeddings.get_shape()[1]
-
+        print(embedding_size,'hi')
         # Run forward pass to calculate embeddings
         print('Calculating features for images')
         batch_size = 1000
@@ -60,7 +60,9 @@ with tf.Graph().as_default():
         class_names = [cls.name.replace('_', ' ') for cls in dataset]
 
         # Saving classifier model
+
         with open(classifier_filename_exp, 'wb') as outfile:
             pickle.dump((model, class_names), outfile)
+
         print('Saved classifier model to file "%s"' % classifier_filename_exp)
         print('Goodluck')

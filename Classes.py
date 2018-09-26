@@ -56,13 +56,12 @@ class RTRecongtion:
                     self.embedding_size = self.embeddings.get_shape()[1]
 
 
-
         def load_classfier(self):
             classifier_filename = os.path.join("Models","Classifier.pkl")
             classifier_filename_exp = os.path.expanduser(classifier_filename)
             with open(classifier_filename_exp, 'rb') as infile:
                 (self.model, self.class_names) = pickle.load(infile)
-                self.HumanNames = os.listdir("./Orginal Images")
+                self.HumanNames = os.listdir("./PostProccesed Images")
                 self.HumanNames.sort()
                 print(self.HumanNames)
 
@@ -72,6 +71,7 @@ class RTRecongtion:
             return bounding_boxes
 
         def AnalysisFrame(self,frame,x,y,w,h):
+                #pdb.set_trace()
                 if frame.ndim == 2:
                     frame = facenet.to_rgb(frame)
                 #HumanNames = ['Abdulrahamn','Mohammed']
@@ -115,21 +115,17 @@ class RTRecongtion:
                 best_class_indices = np.argmax(predictions, axis=1)
                 best_class_probabilities = predictions[np.arange(len(best_class_indices)), best_class_indices]
 
-                #if best_class_probabilities>0.53:
+                if best_class_probabilities>0.01:
 
-                        #cv2.rectangle(frame, (bb[i][0], bb[i][1]), (bb[i][2], bb[i][3]), (0, 255, 0), 2)    #boxing face
-                
-                        #plot result idx under box
-               
-                        # print('result: ', best_class_indices[0])
-                for H_i in self.HumanNames:
-                    if self.HumanNames[best_class_indices[0]] == H_i:
-                        print(H_i)
-                        result_names = self.HumanNames[best_class_indices[0]]
-                        return 1,result_names
-                                #cv2.putText(frame, result_names, (text_x, text_y), cv2.FONT_HERSHEY_COMPLEX_SMALL,
-                                           # 1, (0, 0, 255), thickness=1, lineType=2)
-                     
+                    for H_i in self.HumanNames:
+                        if self.HumanNames[best_class_indices[0]] == H_i:
+                            print(H_i)
+                            result_names = self.HumanNames[best_class_indices[0]]
+                            return 1,result_names
+                                    #cv2.putText(frame, result_names, (text_x, text_y), cv2.FONT_HERSHEY_COMPLEX_SMALL,
+                                               # 1, (0, 0, 255), thickness=1, lineType=2)
+                else:
+                     return 0
                     
                 
                 return 0
@@ -141,26 +137,28 @@ class RTRecongtion:
 class VideoCapture:
 
 
-    def countCameras():
+    def countCameras(self):
         n = 0
         for i in range(10):
             try:
                 cap = cv2.VideoCapture(i)
                 ret, frame = cap.read()
                 cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                clearCapture(cap)
+                cap.release()
                 n += 1
             except:
                 clearCapture(cap)
+                if n==0:
+                    return -1
                 break
-        return n
+            return n
     
     def SelectCamera(self,n):
         self.video_capture = cv2.VideoCapture(n)
 
     def FrameRead(self):
         ret, frame = self.video_capture.read()
-        frame = cv2.resize(frame, (0,0), fx=0.5, fy=0.5) 
+        #frame = cv2.resize(frame, (0,0), fx=0.5, fy=0.5) 
         return frame
 
     def Exit(self):
@@ -168,26 +166,28 @@ class VideoCapture:
 
 class person:
 
-    def __init__(self,tracker,name):
+    name=[]
+
+    def __init__(self,tracker,tempName):
         self.tracker=tracker
-        self.name.append(name)
-        self.size=0
-        self.done=False
+        self.name.append(tempName)
+        self.size=1
+        self.done=True
 
     def update(self,frame):
         return self.tracker.update(frame)
 
-    def set_name(self,name):
-        self.name[size]=name
+    def set_name(self,tempName):
+        self.name.append(tempName)
         self.size+=1
 
-    def get_bbox(self):
-        return tracker.get_position()
+
 
     def get_name(self):
-        if done:
-            return self.finalName
-
+        if self.done:
+            return self.name[0]
+    def get_position(self):
+        return self.tracker.get_position()
 
     def get_size(self):
         return self.size
